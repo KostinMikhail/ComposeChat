@@ -23,8 +23,8 @@ class ChannelListActivity : ComponentActivity() {
                     ),
                     title = "Chats",
                     isShowingSearch = true,
-                    onItemClick = {
-
+                    onItemClick = { channel ->
+                        startActivity(MessagesActivity.getIntent(this, channelId = channel.cid))
                     },
                     onBackPressed = { finish() }
                 )
