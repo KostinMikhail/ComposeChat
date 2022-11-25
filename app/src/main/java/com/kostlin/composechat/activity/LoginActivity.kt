@@ -2,6 +2,7 @@ package com.kostlin.composechat
 
 import android.media.Image
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.lifecycleScope
 import com.kostlin.composechat.ui.theme.ComposeChatTheme
 import com.kostlin.composechat.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +31,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        subscribeToEvents()
+
         setContent {
             ComposeChatTheme {
                 LoginScreen()
@@ -127,5 +132,31 @@ class MainActivity : ComponentActivity() {
 
         }
 
+    }
+
+    private fun subscribeToEvents() {
+
+        lifecycleScope.launchWhenStarted {
+
+            viewModel.loginEvent.collect { event ->
+
+                when (event) {
+                    is LoginViewModel.LogInEvent.ErrorInputTooShort -> {
+                        showToast("Name must be more than 3 char")
+                    }
+                    is LoginViewModel.LogInEvent.ErrorLogIn -> {
+                        val errorMessage = event.error
+                        showToast("Error: $errorMessage")
+                    }
+                    is LoginViewModel.LogInEvent.Success -> {
+                        showToast("Hello")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showToast(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 }

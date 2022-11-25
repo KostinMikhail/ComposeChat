@@ -1,5 +1,6 @@
 package com.kostlin.composechat.viewmodel
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kostlin.composechat.util.Constants
@@ -18,6 +19,8 @@ class LoginViewModel @Inject constructor(
 
     private val _loginEvent = MutableSharedFlow<LogInEvent>()
     val loginEvent = _loginEvent.asSharedFlow()
+
+    private val _loadinState = MutableLiveData<>()
 
     private fun isValidUsername(username: String): Boolean {
         return username.length > Constants.MIN_USERNAME_LENGTH
@@ -54,7 +57,8 @@ class LoginViewModel @Inject constructor(
                     _loginEvent.emit(
                         LogInEvent.ErrorLogIn(
                             result.error().message ?: "Unknown error"
-                        ))
+                        )
+                    )
                 }
             }
         }
@@ -74,7 +78,8 @@ class LoginViewModel @Inject constructor(
                     _loginEvent.emit(
                         LogInEvent.ErrorLogIn(
                             result.error().message ?: "Unknown error"
-                        ))
+                        )
+                    )
                 }
             }
         }
@@ -85,5 +90,9 @@ class LoginViewModel @Inject constructor(
         data class ErrorLogIn(val error: String) : LogInEvent()
         object Success : LogInEvent()
 
+    }
+    sealed class UiLoadingState {
+        object Loading: UiLoadingState()
+        object NotLoading: UiLoadingState()
     }
 }
