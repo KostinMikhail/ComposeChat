@@ -1,5 +1,6 @@
 package com.kostlin.composechat.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,7 +21,9 @@ class LoginViewModel @Inject constructor(
     private val _loginEvent = MutableSharedFlow<LogInEvent>()
     val loginEvent = _loginEvent.asSharedFlow()
 
-    private val _loadinState = MutableLiveData<>()
+    private val _loadinState = MutableLiveData<UiLoadingState>()
+    val loadingState: LiveData<UiLoadingState>
+        get() = _loadinState
 
     private fun isValidUsername(username: String): Boolean {
         return username.length > Constants.MIN_USERNAME_LENGTH
@@ -43,10 +46,14 @@ class LoginViewModel @Inject constructor(
     private fun loginRegisteredUser(username: String, token: String) {
         val user = User(id = username, name = username)
 
+        _loadinState.value = UiLoadingState.Loading
+
         client.connectUser(
             user = user,
             token = token
         ).enqueue { result ->
+
+            _loadinState.value = UiLoadingState.NotLoading
 
             if (result.isSuccess) {
                 viewModelScope.launch {
@@ -65,10 +72,16 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun loginGuestUser(username: String) {
+
+        _loadinState.value = UiLoadingState.Loading
+
         client.connectGuestUser(
             userId = username,
             username = username
         ).enqueue { result ->
+
+            _loadinState.value = UiLoadingState.NotLoading
+
             if (result.isSuccess) {
                 viewModelScope.launch {
                     _loginEvent.emit(LogInEvent.Success)
@@ -91,8 +104,9 @@ class LoginViewModel @Inject constructor(
         object Success : LogInEvent()
 
     }
+
     sealed class UiLoadingState {
-        object Loading: UiLoadingState()
-        object NotLoading: UiLoadingState()
+        object Loading : UiLoadingState()
+        object NotLoading : UiLoadingState()
     }
 }

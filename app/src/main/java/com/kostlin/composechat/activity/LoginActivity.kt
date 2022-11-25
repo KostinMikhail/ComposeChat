@@ -1,5 +1,6 @@
 package com.kostlin.composechat
 
+import android.content.Intent
 import android.media.Image
 import android.os.Bundle
 import android.widget.Toast
@@ -19,13 +20,15 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.kostlin.composechat.activity.ChannelListActivity
 import com.kostlin.composechat.ui.theme.ComposeChatTheme
 import com.kostlin.composechat.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class LoginActivity : ComponentActivity() {
 
     private val viewModel: LoginViewModel by viewModels()
 
@@ -51,6 +54,17 @@ class MainActivity : ComponentActivity() {
         var showProgress: Boolean by remember {
             mutableStateOf(false)
         }
+
+        viewModel.loadingState.observe(this, Observer { uiLoadinState ->
+            showProgress = when (uiLoadinState) {
+                is LoginViewModel.UiLoadingState.Loading -> {
+                    true
+                }
+                is LoginViewModel.UiLoadingState.NotLoading -> {
+                    false
+                }
+            }
+        })
 
         ConstraintLayout(
             modifier = Modifier
@@ -149,7 +163,9 @@ class MainActivity : ComponentActivity() {
                         showToast("Error: $errorMessage")
                     }
                     is LoginViewModel.LogInEvent.Success -> {
-                        showToast("Hello")
+                        showToast("welcome")
+                        startActivity(Intent(this@LoginActivity, ChannelListActivity::class.java))
+                        finish()
                     }
                 }
             }
