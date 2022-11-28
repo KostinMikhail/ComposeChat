@@ -6,37 +6,50 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamShapes
 
-class MessagesActivity: ComponentActivity() {
+class MessagesActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val channelId = intent.getStringExtra(KEY_CHANNEL_ID)
 
-        if (channelId == null){
+        if (channelId == null) {
             finish()
             return
         }
 
         setContent {
-            ChatTheme {
+            ChatTheme(
+                shapes = StreamShapes.defaultShapes().copy(
+                    avatar = RoundedCornerShape(8.dp),
+                    attachment = RoundedCornerShape(16.dp),
+                    myMessageBubble = RoundedCornerShape(16.dp),
+                    inputField = RoundedCornerShape(16.dp)
+
+                )
+
+            ) {
                 MessagesScreen(
                     channelId = channelId,
                     messageLimit = 30,
-                    onBackPressed = {finish()}
-                    )
+                    onBackPressed = { finish() }
+                )
             }
         }
     }
 
-    companion object{
+    companion object {
         private const val KEY_CHANNEL_ID = "channelId"
 
         fun getIntent(context: Context, channelId: String): Intent {
-            return Intent(context, MessagesActivity::class.java).apply{
+            return Intent(context, MessagesActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)
             }
         }
