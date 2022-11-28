@@ -2,6 +2,7 @@ package com.kostlin.composechat.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kostlin.composechat.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.getstream.chat.android.client.ChatClient
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,6 +18,10 @@ class ChannelListViewModel @Inject constructor(
 
     private val _createChannelEvent = MutableSharedFlow<CreateChannelEvent>()
     val createChannelEvent = _createChannelEvent.asSharedFlow()
+
+    fun logout() {
+        client.disconnect()
+    }
 
     fun createChannel(channelName: String, channelType: String = "messaging") {
 
@@ -36,7 +41,7 @@ class ChannelListViewModel @Inject constructor(
                 memberIds = emptyList(),
                 extraData = mapOf(
                     "name" to trimmedChannelName,
-                    "image" to ""
+                    "image" to "htttps://bit.ly/2TIt8NR"
                 )
             ).enqueue { result ->
 
@@ -54,6 +59,7 @@ class ChannelListViewModel @Inject constructor(
             }
         }
     }
+
 }
 
 sealed class CreateChannelEvent {

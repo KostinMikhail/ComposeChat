@@ -1,7 +1,9 @@
 package com.kostlin.composechat.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -17,9 +19,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
+import com.kostlin.composechat.LoginActivity
 import com.kostlin.composechat.viewmodel.ChannelListViewModel
-
 import com.kostlin.composechat.viewmodel.CreateChannelEvent
+
 import dagger.hilt.android.AndroidEntryPoint
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
@@ -32,6 +36,8 @@ class ChannelListActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        subscribeToEvents()
 
         setContent {
             ChatTheme {
@@ -54,7 +60,7 @@ class ChannelListActivity : ComponentActivity() {
                         fieldName = "type",
                         values = listOf("gaming", "messaging", "commerce", "team", "livestream")
                     ),
-                    title = "Chats",
+                    title = "Chats" + "\uD83D\uDC68\u200D\uD83D\uDCBB",
                     isShowingSearch = true,
                     onItemClick = { channel ->
                         startActivity(MessagesActivity.getIntent(this, channelId = channel.cid))
@@ -62,6 +68,11 @@ class ChannelListActivity : ComponentActivity() {
                     onBackPressed = { finish() },
                     onHeaderActionClick = {
                         showDialog = true
+                    },
+                    onHeaderAvatarClick = {
+                        viewModel.logout()
+                        finish()
+                        startActivity(Intent(this, LoginActivity::class.java))
                     }
                 )
             }
@@ -102,4 +113,29 @@ class ChannelListActivity : ComponentActivity() {
 
     }
 
+    private fun subscribeToEvents() {
+
+        lifecycleScope.launchWhenStarted {
+
+            viewModel.createChannelEvent.collect { event ->
+
+                when (event) {
+
+                    is CreateChannelEvent.Error -> {
+                        val errorMessage = event.error
+                        showToast(errorMessage)
+                    }
+
+                    is CreateChannelEvent.Success -> {
+                        showToast("channel created")
+                    }
+
+                }
+            }
+        }
+    }
+
+    private fun showToast(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    }
 }

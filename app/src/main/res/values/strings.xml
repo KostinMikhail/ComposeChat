@@ -3,6 +3,17 @@
 
 
     <string name="api_key">fkf5ppdw3jxh</string>
+
     <string name="jwt_token">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic2VyZ2V5aWQifQ.H0cEDwvIkJSUCYIk9rE6hw3QMbaUFhrXPuFI4ANjU9s</string>
-<!--sergeyid-->
+    <!--sergeyid-->
+
+    <string name="jwt_token1">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW50b25pZCJ9.6yFS3sNb9sbLTa70J3gIVWjpigDiBEBc3VrCZeVa4qI</string>
+    <!--antonid-->
+
+    <string name="jwt_token2">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZGltYWlkIn0.KlQ268-d-1jrLyYi4t-J0nWO1S19H-RfnjI1ugm6Fcg</string>
+    <!--dimaid-->
+
+    <string name="jwt_token3">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWxleGlkIn0.w-qtLAnhBvwxUyxRn2MSv2c6UsuUdpEyRiZlNwMMcCQ</string>
+    <!--alexid-->
+
 </resources>
